@@ -32,21 +32,27 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final currentUser = _firebaseAuth.currentUser;
     if (currentUser == null) return null;
 
-    final doc = await _firestore.collection('users').doc(currentUser.uid).get();
-    if (doc.exists && doc.data() != null) {
-      return UserModel.fromMap(doc.data()!, currentUser.uid);
-    } else {
-      // Create user document if it doesn't exist yet
-      final newUser = UserModel(
-        uid: currentUser.uid,
-        email: currentUser.email ?? '',
-        displayName: currentUser.displayName ?? 'Người dùng FinSmart',
-        photoUrl: currentUser.photoURL,
-        createdAt: DateTime.now(),
-      );
-      await _firestore.collection('users').doc(currentUser.uid).set(newUser.toMap());
-      return newUser;
+    try {
+      final doc = await _firestore
+          .collection('users')
+          .doc(currentUser.uid)
+          .get()
+          .timeout(const Duration(seconds: 3));
+
+      if (doc.exists && doc.data() != null) {
+        return UserModel.fromMap(doc.data()!, currentUser.uid);
+      }
+    } catch (e) {
+      debugPrint('Firestore getCurrentUser exception: $e');
     }
+
+    return UserModel(
+      uid: currentUser.uid,
+      email: currentUser.email ?? '',
+      displayName: currentUser.displayName ?? 'Người dùng FinSmart',
+      photoUrl: currentUser.photoURL,
+      createdAt: DateTime.now(),
+    );
   }
 
   @override
@@ -61,20 +67,27 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       final uid = credential.user!.uid;
-      final doc = await _firestore.collection('users').doc(uid).get();
 
-      if (doc.exists && doc.data() != null) {
-        return UserModel.fromMap(doc.data()!, uid);
-      } else {
-        final newUser = UserModel(
-          uid: uid,
-          email: email,
-          displayName: credential.user!.displayName ?? email.split('@').first,
-          createdAt: DateTime.now(),
-        );
-        await _firestore.collection('users').doc(uid).set(newUser.toMap());
-        return newUser;
+      try {
+        final doc = await _firestore
+            .collection('users')
+            .doc(uid)
+            .get()
+            .timeout(const Duration(seconds: 3));
+
+        if (doc.exists && doc.data() != null) {
+          return UserModel.fromMap(doc.data()!, uid);
+        }
+      } catch (e) {
+        debugPrint('Firestore signInWithEmail exception: $e');
       }
+
+      return UserModel(
+        uid: uid,
+        email: email,
+        displayName: credential.user!.displayName ?? email.split('@').first,
+        createdAt: DateTime.now(),
+      );
     } on FirebaseAuthException catch (e) {
       throw AuthFailure(_getAuthErrorMessage(e.code));
     } catch (e) {
@@ -106,11 +119,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         createdAt: DateTime.now(),
       );
 
-      // TỰ ĐỘNG TẠO BẢNG 'users' VÀ DOCUMENT TRÊN FIRESTORE
-      await _firestore.collection('users').doc(uid).set(userModel.toMap());
+      // TỰ ĐỘNG TẠO BẢNG 'users' VÀ DOCUMENT TRÊN FIRESTORE (KÈM TIMEOUT & CẢNH BÁO)
+      try {
+        await _firestore
+            .collection('users')
+            .doc(uid)
+            .set(userModel.toMap())
+            .timeout(const Duration(seconds: 3));
 
-      // TỰ ĐỘNG TẠO CÁC DANH MỤC MẶC ĐỊNH CHO NGƯỜI DÙNG MỚI
-      await _initDefaultCategories(uid);
+        // TỰ ĐỘNG TẠO CÁC DANH MỤC MẶC ĐỊNH CHO NGƯỜI DÙNG MỚI
+        await _initDefaultCategories(uid).timeout(const Duration(seconds: 3));
+      } catch (e) {
+        // Nếu Firestore chưa được bật trên Firebase Console hoặc bị chối quyền,
+        // vẫn cho phép đăng nhập thành công và ghi log cảnh báo
+        debugPrint('Lưu thông tin Firestore bị bỏ qua (Firestore chưa được bật trên Firebase Console): $e');
+      }
 
       return userModel;
     } on FirebaseAuthException catch (e) {
