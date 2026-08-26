@@ -32,11 +32,11 @@ class GlassCard extends StatelessWidget {
         child: Container(
           padding: padding ?? const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor.withOpacity(opacity),
+            color: Theme.of(context).cardColor.withValues(alpha: opacity),
             borderRadius: effectiveBorderRadius,
             border: border ??
                 Border.all(
-                  color: Colors.white.withOpacity(0.15),
+                  color: Colors.white.withValues(alpha: 0.15),
                   width: 1.0,
                 ),
           ),
