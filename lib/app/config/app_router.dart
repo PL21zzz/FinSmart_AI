@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/auth/presentation/pages/splash_page.dart';
+import '../../features/home/presentation/pages/main_navigation_page.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -12,35 +15,19 @@ class AppRouter {
     routes: [
       GoRoute(
         path: splash,
-        builder: (context, state) => const Scaffold(
-          body: Center(
-            child: Text('FinSmart AI - Splash Screen'),
-          ),
-        ),
+        builder: (context, state) => const SplashPage(),
       ),
       GoRoute(
         path: login,
-        builder: (context, state) => const Scaffold(
-          body: Center(
-            child: Text('Login Screen'),
-          ),
-        ),
+        builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
         path: register,
-        builder: (context, state) => const Scaffold(
-          body: Center(
-            child: Text('Register Screen'),
-          ),
-        ),
+        builder: (context, state) => const RegisterPage(),
       ),
       GoRoute(
         path: mainNav,
-        builder: (context, state) => const Scaffold(
-          body: Center(
-            child: Text('Main Navigation Screen'),
-          ),
-        ),
+        builder: (context, state) => const MainNavigationPage(),
       ),
     ],
   );

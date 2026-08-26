@@ -1,9 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'app/config/env_config.dart';
 import 'app/config/app_router.dart';
 import 'app/theme/app_theme.dart';
+import 'features/auth/data/repositories/auth_repository_impl.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -38,13 +41,22 @@ class FinSmartApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'FinSmart AI',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark, // Default to sleek Dark Mode
-      routerConfig: AppRouter.router,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc(
+            authRepository: AuthRepositoryImpl(),
+          ),
+        ),
+      ],
+      child: MaterialApp.router(
+        title: 'FinSmart AI',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.dark, // Default to sleek Dark Mode
+        routerConfig: AppRouter.router,
+      ),
     );
   }
 }
