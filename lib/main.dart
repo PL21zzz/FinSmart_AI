@@ -7,6 +7,8 @@ import 'app/config/app_router.dart';
 import 'app/theme/app_theme.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/transaction/data/repositories/transaction_repository_impl.dart';
+import 'features/transaction/presentation/bloc/transaction_bloc.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -46,6 +48,11 @@ class FinSmartApp extends StatelessWidget {
         BlocProvider<AuthBloc>(
           create: (context) => AuthBloc(
             authRepository: AuthRepositoryImpl(),
+          ),
+        ),
+        BlocProvider<TransactionBloc>(
+          create: (context) => TransactionBloc(
+            repository: TransactionRepositoryImpl(),
           ),
         ),
       ],
