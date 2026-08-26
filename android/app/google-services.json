@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "560929017132",
+    "project_id": "finsmart-ai-9a3cd",
+    "storage_bucket": "finsmart-ai-9a3cd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:560929017132:android:597445d2f2b2d20f5cf089",
+        "android_client_info": {
+          "package_name": "com.finsmart.finsmart_ai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "560929017132-3rjknuvnvosv4ic5i7i6to972ao94seq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8iwi4xbJCiuFB8Q21rG2YV4WDIwKaZ2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "560929017132-3rjknuvnvosv4ic5i7i6to972ao94seq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

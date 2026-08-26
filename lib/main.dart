@@ -1,8 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'app/config/env_config.dart';
 import 'app/config/app_router.dart';
 import 'app/theme/app_theme.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +15,16 @@ void main() async {
     debugPrint('EnvConfig initialized successfully. Gemini Key present: ${EnvConfig.geminiApiKey.isNotEmpty}');
   } catch (e) {
     debugPrint('Error loading .env file: $e');
+  }
+
+  // Initialize Firebase
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    debugPrint('Firebase initialized successfully.');
+  } catch (e) {
+    debugPrint('Error initializing Firebase: $e');
   }
 
   // Initialize Hive for offline-first caching
