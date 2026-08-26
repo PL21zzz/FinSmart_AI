@@ -56,13 +56,20 @@ class FinSmartApp extends StatelessWidget {
           ),
         ),
       ],
-      child: MaterialApp.router(
-        title: 'FinSmart AI',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.dark, // Default to sleek Dark Mode
-        routerConfig: AppRouter.router,
+      child: Builder(
+        builder: (context) {
+          final authBloc = context.read<AuthBloc>();
+          final router = AppRouter.createRouter(authBloc);
+
+          return MaterialApp.router(
+            title: 'FinSmart AI',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: ThemeMode.dark, // Default to sleek Dark Mode
+            routerConfig: router,
+          );
+        },
       ),
     );
   }

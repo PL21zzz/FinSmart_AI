@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../ai_coach/presentation/pages/ai_coach_page.dart';
 import '../../../ai_scanner/presentation/pages/ai_scanner_page.dart';
 import '../../../analytics/presentation/pages/analytics_page.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
-import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../../transaction/presentation/bloc/transaction_bloc.dart';
 import '../../../transaction/presentation/bloc/transaction_event.dart';
@@ -106,41 +106,61 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   Widget _buildDashboardHome(BuildContext context, String displayName) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: AppColors.accent,
-              child: Text(
-                displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        title: InkWell(
+          onTap: () {
+            final authState = context.read<AuthBloc>().state;
+            if (authState is Authenticated) {
+              context.push('/profile');
+            } else {
+              context.go('/login');
+            }
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Xin chào,',
-                  style: TextStyle(fontSize: 12, color: AppColors.textSecondaryDark),
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: AppColors.accent,
+                  child: Text(
+                    displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-                Text(
-                  displayName,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Xin chào,',
+                      style: TextStyle(fontSize: 12, color: AppColors.textSecondaryDark),
+                    ),
+                    Text(
+                      displayName,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout_outlined),
-            tooltip: 'Đăng xuất',
+            icon: const Icon(Icons.person_outline),
+            tooltip: 'Tài khoản',
             onPressed: () {
-              context.read<AuthBloc>().add(AuthLogoutRequested());
+              final authState = context.read<AuthBloc>().state;
+              if (authState is Authenticated) {
+                context.push('/profile');
+              } else {
+                context.go('/login');
+              }
             },
           ),
         ],
